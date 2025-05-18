@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Admin: Manage Questions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey:    "AIzaSyDo4kq4yPoIXNTqDJHeY-ofCVZ9kAf0WM4",
+      authDomain:"patraq-43226.firebaseapp.com",
+      projectId: "patraq-43226",
+      storageBucket: "patraq-43226.appspot.com",
+      messagingSenderId: "904731693705",
+      appId:     "1:904731693705:web:77560c20c3649e8aaaac58",
+      measurementId: "G-MNTLCEGQ34"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+</head>
+<body>
+  <main class="content">
+    <h1>Admin: Manage Questions</h1>
+
+    <!-- Form to add/edit a question -->
+    <form id="qForm" class="card">
+      <h2 id="formHeading">Add New Question</h2>
+
+      <label>Subject</label>
+      <select id="subjectSelect" required></select>
+
+      <label>Sub-Topic</label>
+      <select id="subSelect" required></select>
+
+      <label>Question Text</label>
+      <textarea id="qText" rows="3" required></textarea>
+
+      <label>Image URL (optional)</label>
+      <input id="qImg" placeholder="https://…" />
+
+      <h3>Options</h3>
+      <div id="optsWrapper">
+        <!-- 4 option rows -->
+      </div>
+
+      <button type="submit" class="btn-primary">Save Question</button>
+    </form>
+
+    <!-- List of questions -->
+    <section class="card-grid" id="questionsGrid"></section>
+  </main>
+
+  <script src="adminQuestions.js"></script>
+</body>
+</html>

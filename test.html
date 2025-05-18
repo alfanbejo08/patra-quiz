@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Test Page</title>
+  <link rel="stylesheet" href="styles.css"/>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script>
+    // ← your config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDo4kq4yPoIXNTqDJHeY-ofCVZ9kAf0WM4",
+      authDomain: "patraq-43226.firebaseapp.com",
+      projectId: "patraq-43226",
+      storageBucket: "patraq-43226.appspot.com",
+      messagingSenderId: "904731693705",
+      appId: "1:904731693705:web:77560c20c3649e8aaaac58",
+      measurementId: "G-MNTLCEGQ34"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+</head>
+<body>
+  <!-- Loading overlay -->
+  <div class="loader-overlay" id="loader">
+    <img src="images/loading.png" alt="Loading…"/>
+  </div>
+
+  <div class="test-container">
+    <div class="test-header">
+      <h2 class="test-title" id="quizTitle">Quiz</h2>
+      <button id="checkBtn" class="btn-check">Check Answer</button>
+    </div>
+    <div class="test-progress"><div id="progressBar"></div></div>
+    <div class="question-section">
+      <p id="questionText"></p>
+      <img id="questionImage" alt="" />
+      <div class="options" id="optionsContainer"></div>
+    </div>
+    <div class="nav-buttons">
+      <button id="prevBtn">Previous</button>
+      <button id="nextBtn" class="primary">Next</button>
+    </div>
+  </div>
+
+  <div class="results" id="results" style="display:none"></div>
+
+  <script>
+    firebase.auth().onAuthStateChanged(async user => {
+      if (!user) {
+        // not logged in → back to login page
+        return location.href = 'loginsignup.html';
+      }
+
+      const loader = document.getElementById('loader');
+      const db     = firebase.firestore();
+      const uid    = user.uid;
+
+      // show spinner
+      loader.style.display = 'flex';
+
+      // get context
+      const subj = localStorage.getItem('selectedSubject') || '';
+      const sub  = localStorage.getItem('selectedSub')     || '';
+      document.getElementById('quizTitle').textContent = `${subj} › ${sub}`;
+
+      // fetch questions
+      let questions = [];
+      try {
+        const snap = await db.collection('questions')
+          .where('subject','==', subj)
+          .where('sub','==', sub)
+          .orderBy('createdAt')
+          .get();
+        snap.forEach(d => questions.push({ id: d.id, ...d.data() }));
+      } catch(err) {
+        console.error(err);
+        alert('Failed to load quiz questions:\n' + err.message);
+      } finally {
+        loader.style.display = 'none';
+      }
+
+      // no questions?
+      if (!questions.length) {
+        return alert('No questions available for this topic.');
+      }
+
+      // see if user already has an attempt
+      const attemptRef = db
+        .collection('users').doc(uid)
+        .collection('attempts')
+        .doc(`${subj}|${sub}`);
+      const attemptSnap = await attemptRef.get();
+
+      // quiz state
+      let current = 0;
+      let selected = Array(questions.length).fill(null);
+
+      // DOM refs
+      const qText  = document.getElementById('questionText');
+      const qImg   = document.getElementById('questionImage');
+      const optsC  = document.getElementById('optionsContainer');
+      const prog   = document.getElementById('progressBar');
+      const prevB  = document.getElementById('prevBtn');
+      const nextB  = document.getElementById('nextBtn');
+      const checkB = document.getElementById('checkBtn');
+      const quizCt = document.querySelector('.test-container');
+      const resDiv = document.getElementById('results');
+
+      function loadQ(){
+        optsC.innerHTML = '';
+        const q = questions[current];
+        qText.textContent = `Q${current+1}/${questions.length}: ${q.text}`;
+        if (q.imgURL) {
+          qImg.src = q.imgURL;
+          qImg.style.display = 'block';
+        } else {
+          qImg.style.display = 'none';
+        }
+        q.options.forEach((opt,i) => {
+          const d = document.createElement('div');
+          d.className = 'option';
+          d.textContent = `${'ABCD'[i]}. ${opt}`;
+          if (selected[current] === i) d.classList.add('selected');
+          d.onclick = () => {
+            selected[current] = i;
+            document
+              .querySelectorAll('.option')
+              .forEach(x=>x.classList.remove('selected'));
+            d.classList.add('selected');
+          };
+          optsC.appendChild(d);
+        });
+        prog.style.width = `${Math.round(current/(questions.length-1)*100)}%`;
+        prevB.style.visibility = current===0?'hidden':'visible';
+        nextB.textContent = current===questions.length-1?'Finish':'Next';
+      }
+
+      function finishQuiz(){
+        // save attempt
+        attemptRef.set({
+          subject: subj,
+          sub: sub,
+          selectedAnswers: selected,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        // hide quiz UI
+        quizCt.style.display = 'none';
+
+        // compute score
+        const answered = selected.filter(a=>a!==null).length;
+        const correct  = selected.reduce((acc,a,i)=>
+                          a===questions[i].correct?acc+1:acc,0);
+        const pct = answered?((correct/answered)*100).toFixed(1):0;
+
+        // render results
+        let html = `
+          <div class="result-card">
+            <div class="percentage">${pct}%</div>
+            <div class="summary">
+              ${correct} out of ${answered} answered correct
+            </div>
+            <ul class="question-list">`;
+        questions.forEach((_,i)=>{
+          if (selected[i]!==null){
+            const ok = selected[i]===questions[i].correct;
+            html += `<li class="${ok?'correct':'incorrect'}">
+                       Question ${i+1}
+                     </li>`;
+          }
+        });
+        html += `</ul></div>`;
+        resDiv.innerHTML = html;
+        resDiv.style.display = 'block';
+      }
+
+      // if we already have an attempt, load & show results immediately
+      if (attemptSnap.exists) {
+        selected = attemptSnap.data().selectedAnswers || selected;
+        return finishQuiz();
+      }
+
+      // else normal quiz flow
+      loadQ();
+      prevB.onclick  = ()=>{ if(current>0) { current--; loadQ(); }};
+      nextB.onclick  = ()=>{ 
+        if (current<questions.length-1) { current++; loadQ(); }
+        else finishQuiz();
+      };
+      checkB.onclick = ()=>{
+        const sel = selected[current];
+        if (sel===null) return alert('Please select an option first.');
+        alert(
+          sel===questions[current].correct
+            ? '✅ Correct!' 
+            : `❌ Wrong! Correct is ${'ABCD'[questions[current].correct]}`
+        );
+      };
+    });
+  </script>
+</body>
+</html>

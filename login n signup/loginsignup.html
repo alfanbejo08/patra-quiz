@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Login / Signup</title>
+
+  <!-- Inter font -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+    rel="stylesheet"/>
+  <link rel="stylesheet" href="login.css"/>
+
+  <!-- Firebase SDKs (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <!-- Initialize Firebase -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDo4kq4yPoIXNTqDJHeY-ofCVZ9kAf0WM4",
+      authDomain: "patraq-43226.firebaseapp.com",
+      projectId: "patraq-43226",
+      storageBucket: "patraq-43226.appspot.com",
+      messagingSenderId: "904731693705",
+      appId: "1:904731693705:web:77560c20c3649e8aaaac58",
+      measurementId: "G-MNTLCEGQ34"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db   = firebase.firestore();
+  </script>
+</head>
+
+<body>
+  <div class="login-container">
+    <!-- LEFT PANEL -->
+    <div class="welcome-panel">
+      <h1>Welcome Back!</h1>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="form-panel">
+      <h2 id="formTitle">Login</h2>
+      <p id="formDesc">Welcome back! Please login to your account.</p>
+
+      <form id="authForm">
+        <!-- Sign-up only field -->
+        <div id="nameRow">
+          <label for="displayName">Name</label>
+          <input
+            id="displayName"
+            name="displayName"
+            type="text"
+            placeholder="John Doe"
+          />
+        </div>
+
+        <label for="username">Email</label>
+        <input
+          id="username"
+          name="username"
+          type="email"
+          placeholder="you@example.com"
+          required
+        />
+
+        <label for="password">Password</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          placeholder="********"
+          required
+        />
+
+        <div class="options">
+          <div class="remember">
+            <input type="checkbox" id="rememberMe"/>
+            <label for="rememberMe">Remember Me</label>
+          </div>
+          <a href="#" class="forgot">Forgot Password?</a>
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn">Login</button>
+      </form>
+
+      <p class="switch-text">
+        <span id="switchPrompt">New User?</span>
+        <a href="#" id="toggleLink">Signup</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="login.js"></script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+:root {
+    --primary: #ff7900;
+    --primary-light: #ffc266;
+    --white: #ffffff;
+    --text: #333333;
+    --radius: 8px;
+    --font: "Inter", sans-serif;
+  }
+  
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+  body {
+    font-family: var(--font);
+    background: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .login-container {
+    display: flex;
+    width: 800px;
+    max-width: 90%;
+    height: 500px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  
+  /* Left gradient panel */
+  .welcome-panel {
+    flex: 1;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .welcome-panel h1 {
+    color: var(--white);
+    font-size: 2.5rem;
+  }
+  
+  /* Right form panel */
+  .form-panel {
+    flex: 1;
+    background: var(--white);
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+  }
+  .form-panel h2 {
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+  }
+  .form-panel p {
+    color: #666;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  label {
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+  input {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: var(--radius);
+    font-size: 1rem;
+  }
+  
+  .options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+  }
+  .remember {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .forgot {
+    color: var(--primary);
+    text-decoration: none;
+  }
+  
+  .btn {
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  .btn:hover {
+    background: var(--primary-light);
+  }
+  
+  .switch-text {
+    margin-top: auto;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+  .switch-text a {
+    color: var(--primary);
+    text-decoration: none;
+    margin-left: 0.25rem;
+  }
+  

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Patra Quiz Dashboard</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+    rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <!-- top navigation -->
+  <header class="site-header">
+    <div class="logo">Patra Quiz</div>
+    <nav class="top-nav">
+      <a href="#" class="nav-item">Dashboard</a>
+      <a href="#" class="nav-item">One Patra</a>
+      <a href="#" class="nav-item">Master</a>
+      <a href="#" class="nav-item">About</a>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-btn" aria-label="Notifications">🔔</button>
+      <div class="user-info">
+        <span id="usernameDisplay">guest</span>
+        <div class="avatar"></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main-wrapper">
+    <!-- left sidebar menu -->
+    <aside class="dashboard-sidebar">
+        <ul>
+          <li>
+            <a href="against.html">
+              <img src="images/One-Patra-Book.png" alt="One Patra" />
+              <span>Against One Patra</span>
+            </a>
+          </li>
+          <li>
+            <a href="championship.html">
+              <img src="images/Trophy.png" alt="Championship" />
+              <span>Champions</span>
+            </a>
+          </li>
+          <li>
+            <a href="daily.html">
+              <img src="images/Quiz-Paper.png" alt="Daily Quiz" />
+              <span>Daily Quiz</span>
+            </a>
+          </li>
+        </ul>
+      </aside>
+      
+
+    <!-- main dashboard area -->
+    <section class="dashboard-main">
+      <!-- welcome box -->
+      <div class="welcome-box">
+        <h2>Welcome back, <span id="usernameDisplay2">guest</span>!</h2>
+        <p>Your progress is looking great. Keep it up!</p>
+        <button class="btn-primary">Find Course</button>
+      </div>
+
+      <!-- stats row -->
+      <div class="stats-row">
+        <div class="card stat-card">
+          <h3>Task Completed</h3>
+          <div class="chart-placeholder">[Bar Chart]</div>
+        </div>
+        <div class="card stat-card">
+          <h3>Skill Rank</h3>
+          <div class="rank-circle"><span>10</span></div>
+          <small>View More &gt;</small>
+        </div>
+      </div>
+
+      <!-- recommended activity -->
+      <div class="recommend-section">
+        <h3>Recommended Activity</h3>
+        <div class="activity-cards">
+          <a href="#" class="activity-card">
+            <h4>UI/UX Fundamentals</h4>
+            <p>Start your journey with a quick design challenge.</p>
+          </a>
+          <a href="#" class="activity-card">
+            <h4>JS Quiz Booster</h4>
+            <p>Practice core JavaScript concepts.</p>
+          </a>
+          <a href="#" class="activity-card">
+            <h4>CSS Mastery</h4>
+            <p>Test your styling skills on real-world layouts.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- existing Auth Modal / script.js here -->
+  <script defer src="script.js"></script>
+</body>
+</html>

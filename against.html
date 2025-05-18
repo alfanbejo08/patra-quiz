@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Select a Subject</title>
+  <link rel="stylesheet" href="styles.css"/>
+
+  <!-- 1) Firebase SDKs (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <!-- 2) Initialize Firebase (use your config) -->
+  <script>
+    const firebaseConfig = {
+      apiKey:    "AIzaSyDo4kq4yPoIXNTqDJHeY-ofCVZ9kAf0WM4",
+      authDomain:"patraq-43226.firebaseapp.com",
+      projectId: "patraq-43226",
+      storageBucket: "patraq-43226.appspot.com",
+      messagingSenderId: "904731693705",
+      appId:     "1:904731693705:web:77560c20c3649e8aaaac58",
+      measurementId: "G-MNTLCEGQ34"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+</head>
+<body>
+
+  <!-- Loading overlay -->
+<div class="loader-overlay" id="loader">
+  <img src="images/loading.png" alt="Loading…" />
+</div>
+
+  <div class="wrapper">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="logo">Patra Quiz</div>
+      <nav>
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="loginsignup.html" class="nav-link">Login / Signup</a>
+      </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="search-wrapper">
+          <input type="search" placeholder="Search subjects…" />
+        </div>
+        <button class="btn-primary">Create Quiz +</button>
+      </header>
+
+      <!-- PAGE HEADER -->
+      <section class="page-header">
+        <h2>Select a Subject</h2>
+      </section>
+
+      <!-- GRID OF SUBJECT CARDS -->
+      <section class="card-grid" id="subjects"></section>
+    </main>
+  </div>
+
+  <!-- 3) Your fetch logic -->
+    <!-- at the end of body, after your wrapper… -->
+    <script>
+      // grab elements
+      const loader    = document.getElementById('loader');
+      const container = document.getElementById('subjects');
+      const db        = firebase.firestore();
+  
+      // show loading overlay
+      loader.style.display = 'flex';
+  
+      // fetch all subjects from Firestore
+      db.collection('subjects')
+        .orderBy('createdAt','desc')
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            const { name, subs } = doc.data();
+            // build each subject card
+            const card = document.createElement('div');
+            card.className = 'course-card';
+            card.innerHTML = `
+              <div class="course-img"></div>
+              <div class="course-content">
+                <h3>${name}</h3>
+                <p>${subs.length} topic${subs.length !== 1 ? 's' : ''}</p>
+                <button class="btn-small btn-primary">Start</button>
+              </div>`;
+            // wire up Start button
+            card.querySelector('button').addEventListener('click', () => {
+              localStorage.setItem('selectedSubject', name);
+              localStorage.setItem('subList', JSON.stringify(subs));
+              location.href = 'sub.html';
+            });
+            container.appendChild(card);
+          });
+        })
+        .catch(err => {
+          console.error(err);
+          container.textContent = 'Error loading subjects.';
+        })
+        .finally(() => {
+          // hide loading overlay
+          loader.style.display = 'none';
+        });
+    </script>
+  
+</body>
+</html>

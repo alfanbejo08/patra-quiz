@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Pick a Topic</title>
+  <link rel="stylesheet" href="styles.css"/>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <!-- Initialize Firebase -->
+  <script>
+    const firebaseConfig = {
+      apiKey:    "AIzaSyDo4kq4yPoIXNTqDJHeY-ofCVZ9kAf0WM4",
+      authDomain:"patraq-43226.firebaseapp.com",
+      projectId: "patraq-43226",
+      storageBucket: "patraq-43226.appspot.com",
+      messagingSenderId: "904731693705",
+      appId:     "1:904731693705:web:77560c20c3649e8aaaac58",
+      measurementId: "G-MNTLCEGQ34"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+</head>
+<body>
+  <!-- Loading overlay -->
+  <div class="loader-overlay" id="loader">
+    <img src="images/loading.png" alt="Loading…"/>
+  </div>
+
+  <div class="wrapper">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="logo">Patra Quiz</div>
+      <nav>
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="loginsignup.html" class="nav-link">Login / Signup</a>
+      </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+      <header class="topbar">
+        <div class="search-wrapper">
+          <input type="search" placeholder="Search topics…" />
+        </div>
+        <div class="user">
+          <span id="usernameDisplay">guest</span>
+          <div class="avatar"></div>
+        </div>
+      </header>
+
+      <section class="page-header">
+        <h2 id="parent">Loading…</h2>
+      </section>
+
+      <section class="card-grid" id="subsubjects"></section>
+    </main>
+  </div>
+
+  <script>
+    firebase.auth().onAuthStateChanged(async user => {
+      const loader    = document.getElementById('loader');
+      const parentEl  = document.getElementById('parent');
+      const container = document.getElementById('subsubjects');
+      const db        = firebase.firestore();
+
+      // If not logged in, hide loader then redirect:
+      if (!user) {
+        loader.style.display = 'none';
+        return location.href = 'loginsignup.html';
+      }
+
+      // At this point the user is signed in
+      const uid     = user.uid;
+      const subject = localStorage.getItem('selectedSubject') || 'Subject';
+      const subs    = JSON.parse(localStorage.getItem('subList') || '[]');
+
+      // Set the header
+      parentEl.textContent = subject + ' › Pick a Topic';
+
+      // Show loader while we render
+      loader.style.display = 'flex';
+
+      try {
+        // For each sub-topic, render the card and check completion in parallel
+        await Promise.all(subs.map(async name => {
+          const card = document.createElement('div');
+          card.className = 'course-card';
+          card.innerHTML = `
+            <div class="course-img"></div>
+            <div class="course-content">
+              <h3>${name}</h3>
+              <p>Click to start the quiz on ${name}.</p>
+              <button class="btn-small btn-primary">Start</button>
+            </div>`;
+
+          // Start button
+          card.querySelector('button')
+              .addEventListener('click', e => {
+                e.preventDefault();
+                localStorage.setItem('selectedSub', name);
+                location.href = 'test.html';
+              });
+
+          // Check if this quiz was already attempted
+          const key  = `${subject}|${name}`;
+          const snap = await db
+            .collection('users').doc(uid)
+            .collection('attempts').doc(key)
+            .get();
+          if (snap.exists) {
+            const badge = document.createElement('span');
+            badge.className = 'completed-badge';
+            badge.textContent = 'Completed';
+            card.querySelector('.course-content')
+                .appendChild(badge);
+          }
+
+          container.appendChild(card);
+        }));
+      } catch(err) {
+        console.error("Error rendering sub-topics:", err);
+        alert("Failed to load sub-topics: " + err.message);
+      } finally {
+        // Always hide loader once done (or on error)
+        loader.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

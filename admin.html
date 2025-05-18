@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+    rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+
+  <!-- 1) Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <!-- 2) Initialize Firebase (replace with your own config) -->
+  <script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyDo4kq4yPoIXNTqDJHeY-ofCVZ9kAf0WM4",
+        authDomain: "patraq-43226.firebaseapp.com",
+        projectId: "patraq-43226",
+        storageBucket: "patraq-43226.appspot.com",
+        messagingSenderId: "904731693705",
+        appId: "1:904731693705:web:77560c20c3649e8aaaac58",
+        measurementId: "G-MNTLCEGQ34"
+      // ...etc
+    };
+    firebase.initializeApp(firebaseConfig);
+    // Make firestore available globally
+    const db = firebase.firestore();
+  </script>
+</head>
+<body>
+  <main class="content">
+    <h1>Admin: Manage Subjects</h1>
+
+    <!-- form to add a subject -->
+    <form id="subjectForm" class="card">
+      <h2>Create a New Subject</h2>
+      <input id="subjectName" placeholder="Subject name" required/>
+
+      <div id="subInputs">
+        <input class="subInput" placeholder="Sub-topic" required/>
+      </div>
+
+      <button type="button" id="addSubBtn" class="btn-outline">
+        + Add another sub-topic
+      </button>
+      <button type="submit" class="btn-primary">
+        Create Subject
+      </button>
+    </form>
+
+    <!-- grid of existing subjects -->
+    <section class="card-grid" id="subjectsGrid"></section>
+  </main>
+
+  <!-- 3) admin logic -->
+  <script src="admin.js"></script>
+</body>
+</html>
+
+
+============================
